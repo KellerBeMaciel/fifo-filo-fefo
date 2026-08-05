@@ -1,15 +1,17 @@
-package java.com.exemplo.utils;
+package com.exemplo.utils;
+
+import com.exemplo.models.CloneableClass;
 
 import java.lang.reflect.Array;
 
-public class FIFO<T extends Cloneable> {
+public class FIFO<T extends CloneableClass> {
 
     private static final int DEFAULT_SIZE = 32;
 
     private T[] queue;
-    private int first;
-    private int last;
-    private int size;
+    private int first = 0;
+    private int last = 0;
+    private int maxSize;
 
     @SuppressWarnings("unchecked")
     public FIFO(Class<T> clazz){
@@ -18,20 +20,37 @@ public class FIFO<T extends Cloneable> {
 
     @SuppressWarnings("unchecked")
     public FIFO(Class<T> clazz, int size){
-        this.size = size;
+        this.maxSize = size;
         queue = (T[]) Array.newInstance(clazz, size);
     }
 
-    public T get() {
-        return null;
+    @SuppressWarnings("unchecked")
+    public T get() throws CloneNotSupportedException {
+        T obj = (T) queue[first].clone();
+        queue[first] = null;
+        first++;
+        return obj;
     }
 
-    public void put() {
-
+    public void put(T obj) {
+        queue[last] = obj;
+        last++;
     }
 
     public void clean(){
 
+    }
+
+    public int getCurrentSize(){
+        return last - first;
+    }
+
+    public boolean isEmpty(){
+        return getCurrentSize() == 0;
+    }
+
+    public boolean isFull(){
+        return getCurrentSize() == maxSize;
     }
 
     private void reorder() {
