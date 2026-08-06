@@ -1,5 +1,7 @@
 package com.exemplo.utils;
 
+import com.exemplo.exception.QueueEmpty;
+import com.exemplo.exception.QueueFull;
 import com.exemplo.models.CloneableClass;
 
 import java.lang.reflect.Array;
@@ -26,6 +28,9 @@ public class FIFO<T extends CloneableClass> {
 
     @SuppressWarnings("unchecked")
     public T get() throws CloneNotSupportedException {
+        if(isEmpty())
+            throw new QueueEmpty();
+
         T obj = (T) queue[first].clone();
         queue[first] = null;
         first++;
@@ -33,12 +38,22 @@ public class FIFO<T extends CloneableClass> {
     }
 
     public void put(T obj) {
+        if(isFull())
+            throw new QueueFull();
+
+        if(last == maxSize)
+            reorder();
+
+
         queue[last] = obj;
         last++;
     }
 
-    public void clean(){
+    public void clear(){
+        first = 0;
+        last = 0;
 
+        cleanGarbage();
     }
 
     public int getCurrentSize(){
@@ -54,15 +69,42 @@ public class FIFO<T extends CloneableClass> {
     }
 
     private void reorder() {
+        int index = 0;
 
+        for(int i = first; i < last; i++){
+            queue[index] = queue[i];
+            index++;
+        }
+
+        last -= first;
+        first = 0;
+
+        cleanGarbage();
     }
 
     private void cleanGarbage(){
+        for(int i = last; i < maxSize; i++){
+            queue[i] = null;
+        }
+    }
 
+    // Protected for tests only
+    protected T[] getQueue(){
+        return queue;
     }
 
     @Override
     public String toString(){
-        return null;
+        StringBuilder sb = new StringBuilder("FIFO=[");
+
+        for(int i = first; i < last; i++){
+            sb.append(queue[i]);
+            if(i < last - 1){
+                sb.append(", ");
+            }
+        }
+
+        sb.append("]");
+        return sb.toString();
     }
 }

@@ -1,4 +1,6 @@
-package java.com.exemplo;
+package com.exemplo;
+
+import com.exemplo.utils.FIFO;
 
 public class App {
 
