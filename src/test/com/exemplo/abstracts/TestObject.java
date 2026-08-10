@@ -17,4 +17,12 @@ public class TestObject implements CloneableClass {
             throw new AssertionError();
         }
     }
+
+    @Override
+    public boolean equals(Object obj){
+        if(obj.getClass() != this.getClass()) return false;
+        TestObject newObj = (TestObject) obj;
+
+        return newObj.name.equals(this.name);
+    }
 }

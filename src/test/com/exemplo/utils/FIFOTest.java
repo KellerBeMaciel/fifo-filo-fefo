@@ -12,7 +12,7 @@ import java.util.Objects;
 
 public class FIFOTest {
 
-    private FIFO<TestObject> fifo = new FIFO<>(TestObject.class, 3);
+    private final FIFO<TestObject> fifo = new FIFO<>(TestObject.class, 3);
 
     @Nested
     class General {
